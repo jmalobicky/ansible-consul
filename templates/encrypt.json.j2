@@ -1,1 +1,5 @@
-{"encryption": "{{ consul_gossip_encryption_value }}"}
+{% if %}
+{"encrypt": "{{ hostvars[groups['consul_servers'][0]]['consul_gossip_encryption_value'] }}"}
+{% else %}
+{"encrypt": "{{ hostvars[groups['consul_servers'][0]]['consul_gossip_encryption_value'] }}"}
+{% endif %}

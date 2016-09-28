@@ -75,9 +75,6 @@
 {% if consul_is_server and consul_bootstrap_expect is defined %}
   "bootstrap_expect": {{ consul_bootstrap_expect }},
 {% endif %}
-{% if consul_encrypt_key is defined %}
-  "encrypt": "{{ consul_encrypt_key }}",
-{% endif %}
 {% if consul_watches is defined %}
   "watches": {{ consul_watches|to_nice_json }},
 {% endif %}
