@@ -208,3 +208,48 @@
     create=yes
     owner={{consul_user}}
     group={{consul_group}}
+
+- name: generate consul gossip encrpytion
+  command: "{{ consul_home }}/bin/consul keygen"
+  register: gossip_encryption_value
+  changed_when: false
+  when: consul_gossip_encryption
+
+- name: set fact for encryption value for gossip
+  set_fact:
+    consul_gossip_encryption_value: "{{ gossip_encryption_value.stdout }}"
+
+- name: check if encryption file exists
+  stat: >
+    path={{ consul_config_dir }}/encrypt.json
+  register: consul_encryption_stat
+
+- name: read contents from existing encrpytion file
+  become_user: "{{consul_user }}"
+  command: "cat {{ consul_config_dir }}/encrypt.json"
+  register: consul_existing_encrypt
+  when: consul_encryption_stat.stat.exists
+  changed_when: false
+
+- name: set fact for existing encrypt key
+  set_fact:
+    __consul_existing_encrypt: "{{ consul_existing_encrypt.stdout|from_json }}"
+
+- name: ensure encryption template is in place
+  template: >
+    src={{consul_encryption_template}}
+    dest={{ consul_config_dir }}/encrypt.json
+    owner={{consul_user}}
+    group={{consul_group}}
+    mode=0640
+  when: consul_encryption_stat.stat.exists == False
+  notify:
+    - "{{ consul_restart_handler }}"
+
+- name: ensure defaults file exists
+  file: >
+    path=/etc/default/consul
+    state=touch
+    owner=root
+    group=root
+    mode=0644

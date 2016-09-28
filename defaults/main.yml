@@ -48,6 +48,7 @@ consul_kv_template: "consulkv.j2"
 consul_add_path_template: "consul.sh.j2"
 consul_config_template: "consul.json.j2"
 consul_encryption_template: "encrypt.json.j2"
+consul_default_arg_template: "consul.defaults.j2"
 
 consul_reload_config_handler: reload consul config
 consul_restart_handler: restart consul
@@ -114,7 +115,7 @@ consul_dnsmasq:
   upstream_servers:
     - 8.8.8.8
     - 8.8.4.4
-consul_node_name: "{{ inventory_hostname }}"
+consul_node_name: "{{ ansible_hostname }}"
 # Set to true to enable hostname verification via TLS
 consul_verify_server_hostname: false
 consul_cors_support: false
